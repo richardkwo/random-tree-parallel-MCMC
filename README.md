@@ -1,14 +1,12 @@
 # PART: Parallelizing MCMC with Random Partition Trees
 
-MATLAB implementation of **PART**[^1]: a fast algorithm for aggregating MCMC sub-chain samples
+MATLAB implementation of **PART**<sup>[1](#myfootnote1)</sup>: a fast algorithm for aggregating MCMC sub-chain samples
 
 ## Introduction
 
 The modern scale of data has brought new challenges to Bayesian inference. In particular, conventional MCMC algorithms are computationally very expensive for large data sets. A promising approach to solve this problem is **embarrassingly parallel MCMC** (EP-MCMC), which first partitions the data into multiple subsets and runs independent sampling algorithms on each subset. The subset posterior draws are then aggregated via some combining rules to obtain the final approximation. 
 
-**PART**[^1] is an EP-MCMC algorithm that applies random partition trees to combine the subset posterior draws, which is distribution-free, easy to resample from and can adapt to multiple scales. This repository maintains a MATLAB implementation of PART. 
-
-[^1]: Xiangyu Wang, Fangjian Guo, Katherine A. Heller and David B. Dunson. Parallelizing MCMC with random partition trees. NIPS 2015. http://arxiv.org/abs/1506.03164
+**PART**<sup>[1](#myfootnote1)</sup> is an EP-MCMC algorithm that applies random partition trees to combine the subset posterior draws, which is distribution-free, easy to resample from and can adapt to multiple scales. This repository maintains a MATLAB implementation of PART. 
 
 ## QuickStart
 
@@ -49,7 +47,7 @@ We provide two schemes for aggregation: **pairwise** (recommended) and **one-sta
    
    Set `options.match=true` (enabled by default) will match subsets into better pairs.
    
-2. Calling `combined_posterior = aggregate_PART_onestage(sub_chain, options)` will aggregate all subsets at once. This is not recommended when the number of subsets is large. 
+2. Calling `combined_posterior = aggregate_PART_onestage(sub_chain, options)` will aggregate all subsets at once. This is not recommended when the number of subsets is large.
 
 ### Options
 
@@ -65,8 +63,8 @@ in terms of *(Name, Value)* pairs. `part_options(…)` accepts the following con
 2. `resample_N`: number of samples drawn from the combined posterior (default = 10,000)
 3. `parallel`: if `true`, building trees in parallel with MATLAB Parallel Computing Toolbox (default = true)
 4. `cut_type`: partition rule[^1], currently supporting `kd` (median cut, default) and `ml` (maximum likelihood cut). `kd` can be significantly faster than `ml` for large sample size.
-5. `min_cut_length`: stopping rule, minimum side length of a block, corresponding to $\delta_a$in the paper[^1] (default = 0.0001). It is recommended to adjust the scale of the samples such that `min_cut_length` is applicable to all dimensions. Alternatively, one can manually set `min_cut_length` to a vector of p, corresponding to each dimension of the parameter. 
-6. `min_fraction_block`: stopping rule, corresponding to $\delta_{\rho}$ in the paper[^1], a block no longer splits if the proposed split results in a sub-block containing a fraction of samples less than this number. A number in (0,1) is required (default = 0.01). 
+5. `min_cut_length`: stopping rule, minimum side length of a block, corresponding to $\delta_a$in the paper<sup>[1](#myfootnote1)</sup> (default = 0.0001). It is recommended to adjust the scale of the samples such that `min_cut_length` is applicable to all dimensions. Alternatively, one can manually set `min_cut_length` to a vector of p, corresponding to each dimension of the parameter. 
+6. `min_fraction_block`: stopping rule, corresponding to $\delta_{\rho}$ in the paper<sup>[1](#myfootnote1)</sup>, a block no longer splits if the proposed split results in a sub-block containing a fraction of samples less than this number. A number in (0,1) is required (default = 0.01). 
 7. `local_gaussian_smoothing`: if `true`, local Gaussian smoothing[^1] is applied to the block-wise densities. (default = `true`)
 8. `match`: if `true`, doing better pairwise matching in `aggregate_PART_pairwise(…)`. (default = `true`)
 
@@ -79,7 +77,7 @@ We have implemented the following functions in `src/utils` for evaluation and vi
 1. `plot_marginal_compare({chain_1, chain_2, ...}, {name_1, name_2, ...}, ...)` plots the marginals of several samples. 
 2. `plot_pairwise_compare({chain_1, chain_2, ...}, {name_1, name_2, ...}, ...)` plots the bivariate distribution for several samples. 
 3. `approximate_KL(samples_left, samples_right)` computes the approximate KL divergence KL(left||right) between two samples. The KL is computed from Laplacian approximations fitted to both distributions.
-4. `performance_table({chain_1, chain_2, ...}, {'chain_1', chain_2', ...}, full_posterior, theta)` outputs a table comparing the approximation accuracy of each chain to `full_posterior`. `theta` is a point estimator to the parameters sampled. 
+4. `performance_table({chain_1, chain_2, ...}, {'chain_1', chain_2', ...}, full_posterior, theta)` outputs a table comparing the approximation accuracy of each chain to `full_posterior`. `theta` is a point estimator to the parameters sampled.
 
 ## Other Algorithms
 
@@ -87,11 +85,9 @@ We also implemented several other popular aggregation algorithms under `src/alte
 
 1. `aggregate_average(sub_chain)` aggregates by simple averaging. 
 2. `aggregate_weighted_average(sub_chain)` aggregates by weighted averaging, with weights optimal for Gaussian distributions. 
-3. `aggregate_uai_parametric(sub_chain, n)` outputs n samples by drawing from multiplied Laplacian approximation to subset posteriors[^2].
-4. `aggregate_uai_nonparametric(sub_chain, n)` draws n samples from multiplied kernel density estimation to subchain posteriors[^2].
-5. `aggregate_uai_semiparametric(sub_chain, n)` draws n samples from multiplied semi-parametric estimation to subchain posteriors[^2].
-
-[^2]: W Neiswanger, C Wang, E Xing. Asymptotically Exact, Embarrassingly Parallel MCMC.  UAI 2014.
+3. `aggregate_uai_parametric(sub_chain, n)` outputs n samples by drawing from multiplied Laplacian approximation to subset posteriors<sup>[2](#myfootnote2)</sup>.
+4. `aggregate_uai_nonparametric(sub_chain, n)` draws n samples from multiplied kernel density estimation to subchain posteriors<sup>[2](#myfootnote2)</sup>.
+5. `aggregate_uai_semiparametric(sub_chain, n)` draws n samples from multiplied semi-parametric estimation to subchain posteriors<sup>[2](#myfootnote2)</sup>.
 
 ## Inner Working
 
@@ -138,59 +134,25 @@ We give a brief introduction to the following key functions in PART MATLAB imple
 
 #### Low level
 
-1. `[obj, nodes, log_probs] = buildTree(...)` builds a single tree by first
-   
-   pooling all the data across subsets so that the tree structure is
-   
-   determined. Then unnormalized probability and corresponding density are
-   
-   estimated by block-wise multiplication. `obj` is the root tree node; `nodes`
-   
-   are the leaf nodes that each corresponds to a block in the sample space;
-   
-   `log_probs` are **unnormalized** probabilities of those leaf nodes in
-   
-   logarithm, in correspondence to `nodes`.
-   
-2. `[tree, sampler, sampler_prob] = NormalizeTree(...)` performs (1)
-   
-   recomputing or (2) normalization of a tree by summerming over leaf nodes.
+1. `[obj, nodes, log_probs] = buildTree(...)` builds a single tree by first pooling all the data across subsets so that the tree structure is determined. Then unnormalized probability and corresponding density are estimated by block-wise multiplication. `obj` is the root tree node; `nodes` are the leaf nodes that each corresponds to a block in the sample space;`log_probs` are **unnormalized** probabilities of those leaf nodes in logarithm, in correspondence to `nodes`.
+2. `[tree, sampler, sampler_prob] = NormalizeTree(...)` performs (1) recomputing or (2) normalization of a tree by summerming over leaf nodes.
 
 #### Medium level
 
-1. `[trees, sampler, sampler_prob] = buildForest(RawMCMC, display_info)` builds
-   
-   a random ensemble of trees by calling `buildTree(...)` in parallel. Each
-   
-   tree is also normalized with `NormalizeTree(...)`.
+1. `[trees, sampler, sampler_prob] = buildForest(RawMCMC, display_info)` builds a random ensemble of trees by calling `buildTree(...)` in parallel. Each tree is also normalized with `NormalizeTree(...)`.
 
 #### High level
 
-1. `[trees, sampler, sampler_prob, RawMCMC] = OneStageMCMC(MCdraws, option)` is
-   
-   a wrapper of `buildForest(...)`. The resulting ensemble consists of multiple
-   
-   trees, with each tree combines the posterior across subsets with block-wise
-   
-   direct multiplication.
-   
-2. `[trees, sampler, sampler_prob] = MultiStageMCMC(MCdraws, option)` does
-   
-   pairwise combine for multiple layers until converging into one posterior.
-   
-   Two subsets A and B are matched with some criteria, `OneStageMCMC(...)` is
-   
-   called to combine them into A+B. Samples are drawn from (A+B) and (C+D)
-   
-   respectively to represent the distributions after 1st stage combination.
-   
-   Then, (A+B) and (C+D) are combined into (A+B+C+D) by again calling
-   
-   `OneStageMCMC(...)` on their samples.
-   
+1. `[trees, sampler, sampler_prob, RawMCMC] = OneStageMCMC(MCdraws, option)` is a wrapper of `buildForest(...)`. The resulting ensemble consists of multiple trees, with each tree combines the posterior across subsets with block-wise direct multiplication.
+2. `[trees, sampler, sampler_prob] = MultiStageMCMC(MCdraws, option)` does pairwise combine for multiple layers until converging into one posterior. Two subsets A and B are matched with some criteria, `OneStageMCMC(...)` is called to combine them into A+B. Samples are drawn from (A+B) and (C+D) respectively to represent the distributions after 1st stage combination. Then, (A+B) and (C+D) are combined into (A+B+C+D) by again calling`OneStageMCMC(...)` on their samples.
 3. `aggregated_samples = aggregate_PART_pairwise(sub_chain, options)` is a high level wrapper of `MultiStageMCMC(...)` that draws samples from pairwise aggregated sub-chains. 
-   
-4. `aggregated_samples = aggregate_PART_onestage(sub_chain, options)` is a high level wrapper of `OneStageMCMC(…)` that draws samples from one-stage aggregated sub-chains. 
+4. `aggregated_samples = aggregate_PART_onestage(sub_chain, options)` is a high level wrapper of `OneStageMCMC(…)` that draws samples from one-stage aggregated sub-chains.
+
+### References
+
+<a name="myfootnote1">1</a>: Xiangyu Wang, Fangjian Guo, Katherine A. Heller and David B. Dunson. Parallelizing MCMC with random partition trees. NIPS 2015. http://arxiv.org/abs/1506.03164
+
+<a name="myfootnote2">2</a>: W Neiswanger, C Wang, E Xing. Asymptotically Exact, Embarrassingly Parallel MCMC.  UAI 2014.
 
 ## Authors
 
