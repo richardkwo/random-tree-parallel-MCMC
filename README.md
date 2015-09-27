@@ -36,6 +36,8 @@ Running parallel MCMC with PART consists of the following steps.
       options = part_options('resample_N', 10000);
       combined_posterior_kd_pairwise = aggregate_PART_pairwise(sub_chain, options);
       ```
+      
+      > **Before running the code above**: run `src/init.m` to make sure paths are included.
 
 We strongly recommend reading and running the demos under the `examples/` directory.
 
@@ -156,4 +158,8 @@ We give a brief introduction to the following key functions in PART MATLAB imple
 
 ## Authors
 
-[Richard Guo](https://github.com/richardkwo) and [Samuel Wang](https://github.com/wwrechard). We would appreciate your feedback under *issues* of this repository. 
+[Richard Guo](https://github.com/richardkwo) and [Samuel Wang](https://github.com/wwrechard). We would appreciate your feedback under [*issues*](https://github.com/richardkwo/random-tree-parallel-MCMC/issues) of this repository. 
+
+## License
+
+© Contributors, 2015. Released under the [MIT](https://github.com/richardkwo/random-tree-parallel-MCMC/blob/master/LICENSE) license.
