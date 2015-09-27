@@ -65,7 +65,7 @@ in terms of *(Name, Value)* pairs. `part_options(…)` accepts the following con
 4. `cut_type`: partition rule[^1], currently supporting `kd` (median cut, default) and `ml` (maximum likelihood cut). `kd` can be significantly faster than `ml` for large sample size.
 5. `min_cut_length`: stopping rule, minimum side length of a block, corresponding to $\delta_a$in the paper<sup>[1](#myfootnote1)</sup> (default = 0.0001). It is recommended to adjust the scale of the samples such that `min_cut_length` is applicable to all dimensions. Alternatively, one can manually set `min_cut_length` to a vector of p, corresponding to each dimension of the parameter. 
 6. `min_fraction_block`: stopping rule, corresponding to $\delta_{\rho}$ in the paper<sup>[1](#myfootnote1)</sup>, a block no longer splits if the proposed split results in a sub-block containing a fraction of samples less than this number. A number in (0,1) is required (default = 0.01). 
-7. `local_gaussian_smoothing`: if `true`, local Gaussian smoothing[^1] is applied to the block-wise densities. (default = `true`)
+7. `local_gaussian_smoothing`: if `true`, local Gaussian smoothing<sup>[1](#myfootnote1)</sup> is applied to the block-wise densities. (default = `true`)
 8. `match`: if `true`, doing better pairwise matching in `aggregate_PART_pairwise(…)`. (default = `true`)
 
 Please refer to `help part_options` for more options. 
