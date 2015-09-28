@@ -2,6 +2,8 @@
 
 MATLAB implementation of **PART**<sup>[1](#myfootnote1)</sup>: a fast algorithm for aggregating MCMC sub-chain samples
 
+[TOC]
+
 ## Introduction
 
 The modern scale of data has brought new challenges to Bayesian inference. In particular, conventional MCMC algorithms are computationally very expensive for large data sets. A promising approach to solve this problem is **embarrassingly parallel MCMC** (EP-MCMC), which first partitions the data into multiple subsets and runs independent sampling algorithms on each subset. The subset posterior draws are then aggregated via some combining rules to obtain the final approximation. 
