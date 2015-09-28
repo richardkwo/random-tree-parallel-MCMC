@@ -26,4 +26,3 @@ for l=1:L
 end
 T = array2table(metrics, 'VariableNames', metric_names, 'RowNames', labels);
 end
-

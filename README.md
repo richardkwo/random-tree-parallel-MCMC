@@ -100,6 +100,11 @@ We also implemented several other popular aggregation algorithms under `src/alte
 ├── docs
 │   └── tree15.pdf                      PART paper
 ├── examples/                           QuickStart examples
+│   ├── dirichrnd.m                     sample from Dirichlet
+│   ├── sample_mog.m                    Gibbs sampling for mean of mixture of Gaussian
+│   ├── test_bimodal.m                  demo - bimodal
+│   ├── test_mixture_of_gaussian.m      demo - mixture of Gaussian
+│   └── test_rare_binary.m              demo - rare Bernoulli
 └── src
     ├── PART                            implementation of PART
     │   ├── MultiStageMCMC.m            pairwise aggregation
