@@ -33,7 +33,7 @@ Running parallel MCMC with PART consists of the following steps.
    3. Now, call PART to aggregate samples. The following code draws 10,000 samples from the combined posterior with **PART-KD** algorithm running **pairwise** aggregation. `combined_posterior_kd_pairwise` will be a 10,000 x 4 matrix.
       
       ``` octave
-      options = part_options('resample_N', 10000);
+      options = part_options('cut_type', 'kd', 'resample_N', 10000);
       combined_posterior_kd_pairwise = aggregate_PART_pairwise(sub_chain, options);
       ```
       
