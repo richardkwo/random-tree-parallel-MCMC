@@ -54,10 +54,13 @@ end
 %% Combine via PART: one-stage aggregation
 options = part_options('min_cut_length', 0.001, 'min_fraction_block', 0.01, 'ntree', 8, 'verbose', 2);
 combined_posterior_kd_onestage = aggregate_PART_onestage(sub_chains, options);
+options.cut_type = 'ml';
 combined_posterior_ml_onestage = aggregate_PART_onestage(sub_chains, options);
 options.local_gaussian_smoothing = false;
-combined_posterior_kd_onestage_NoVar = aggregate_PART_onestage(sub_chains, options);
 combined_posterior_ml_onestage_NoVar = aggregate_PART_onestage(sub_chains, options);
+options.cut_type = 'kd';
+combined_posterior_kd_onestage_NoVar = aggregate_PART_onestage(sub_chains, options);
+
 
 
 figure;
@@ -76,6 +79,7 @@ title('PART: one-stage aggregation'); hold off;
 %% Combine via PART: pairwise aggregation
 options = part_options('min_cut_length', 0.001, 'min_fraction_block', 0.01, 'ntree', 8, 'verbose', 2);
 combined_posterior_kd_pairwise = aggregate_PART_pairwise(sub_chains, options);
+options.cut_type = 'ml';
 combined_posterior_ml_pairwise = aggregate_PART_pairwise(sub_chains, options);
 
 figure;

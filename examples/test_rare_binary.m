@@ -69,8 +69,8 @@ plot_marginal_compare({full_chain, combined_posterior_parametric, combined_poste
 %% KD/ML aggregations
 
 options = part_options('min_cut_length', 0.01, 'resample_N', 10000);
-
 combined_posterior_kd_pairwise = aggregate_PART_pairwise(sub_chain, options);
+options.cut_type = 'ml';
 combined_posterior_ml_pairwise = aggregate_PART_pairwise(sub_chain, options);
 
 figure;
@@ -81,15 +81,6 @@ xlim([-2 14]*1e-3);
 
 
 %% other combinations
-% simple averaging
-combined_posterior_averaging = aggregate_average(sub_chain);
-
-% weighted averaging 
-combined_posterior_weighted_averaging = aggregate_weighted_average(sub_chain);
-
-% UAI - parametric
-combined_posterior_parametric = aggregate_uai_parametric(sub_chain);
-
 % UAI - nonparametric
 combined_posterior_nonparametric = aggregate_uai_nonparametric(sub_chain, 1e4);
 

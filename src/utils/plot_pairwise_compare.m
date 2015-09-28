@@ -28,11 +28,13 @@ for u=1:length(dims)
             for c=k:-1:1
                 if size(chains{c},1)>1000
                     x = randsample(size(chains{c},1), 1000);
+                else
+                    x = 1:length(chains{c});
                 end
                 if c==1
-                    plot(chains{c}(x,i), chains{c}(x,j), 'ko', 'MarkerSize', 2, 'DisplayName', labels{c});
+                    plot(chains{c}(x,i), chains{c}(x,j), 'k.', 'MarkerSize', 1, 'DisplayName', labels{c});
                 else 
-                    plot(chains{c}(x,i), chains{c}(x,j), 'o', 'MarkerSize', 2, 'DisplayName', labels{c})
+                    plot(chains{c}(x,i), chains{c}(x,j), 'x', 'MarkerSize', 2, 'DisplayName', labels{c})
                 end
             end
             hold off;

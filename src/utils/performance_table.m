@@ -1,7 +1,10 @@
-function T = performance_table(aggregated_posteriors, labels, full_posterior, theta)
+function T = performance_table(aggregated_posteriors, labels, full_posterior, varargin)
 L = length(aggregated_posteriors);
 assert(L==length(labels));
 metric_names = {'rmse_cov', 'rmse_var', 'rmse_mean', 'KL_true_vs_est', 'KL_est_vs_true', 'relative_l2_error'};
+if isempty(varargin)
+    metric_names = metric_names(1:end-1);
+end
 metrics = zeros(L, length(metric_names));
 for l=1:L
     for i=1:length(metric_names)
@@ -17,7 +20,7 @@ for l=1:L
             case 'KL_est_vs_true'
                 metrics(l, i) = approximate_KL(aggregated_posteriors{l}, full_posterior);
             case 'relative_l2_error'
-                metrics(l, i) = relative_error(aggregated_posteriors{l}, full_posterior, theta);
+                metrics(l, i) = relative_error(aggregated_posteriors{l}, full_posterior, varargin{1});
         end
     end
 end
