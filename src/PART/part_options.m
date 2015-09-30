@@ -3,7 +3,7 @@ function option = part_options(varargin)
 % configure an option for running PART algorithm
 %  
 % Parameters:
-% min_cut_length: \delta_a, minimum side length of a block. (default: 0.0001)
+% min_cut_length: \delta_a, minimum side length of a block. (default: 0.001)
 % min_fraction_block: \delta_\rho, minimum fraction of samples contained by a block (default: 0.01)
 % ntree: number of trees (default: 16)
 % resample_N: number of resamples drawn from an aggregated pair of sub-chains (default: 10000)
@@ -18,7 +18,7 @@ function option = part_options(varargin)
 % Example:
 % option = part_options('min_cut_length', 1e-2, 'ntree', 40)
 
-option.min_cut_length = 0.0001;
+option.min_cut_length = 0.001;
 option.min_fraction_block = 0.01;
 option.ntree = 16;
 option.resample_N = 10000;

@@ -2,8 +2,8 @@ addpath ../src/PART ../src/PART/cut ../src/alternatives ../src/utils
 
 %% generate mixture of mv-normal sample, 2-D
 K = 2; % number of components
-M = 5; % split
-n = 1000;
+M = 4; % split
+n = 400;
 Sigmas = cell(1,K);
 Mus = zeros(K, 2);
 
@@ -14,7 +14,7 @@ Mus = mvnrnd(repmat(mean_mu, K, 1), sigma_mu);
 
 % use the same cov for now
 for k=1:K
-    Sigmas{k} = eye(2)*k/2;
+    Sigmas{k} = eye(2);
 end
 
 % mixture weights
@@ -98,26 +98,34 @@ legend('average', 'weighted average', 'parametric', 'True');
 
 %% KD/ML aggregations
 
-options = part_options('min_cut_length', 0.001, 'resample_N', 1e4, 'ntree', 16);
+options = part_options('min_cut_length', 0.01, 'min_fraction_block', 0.01, 'resample_N', 5000, 'ntree', 16);
 combined_posterior_kd_pairwise = aggregate_PART_pairwise(sub_chain, options);
 options.cut_type = 'ml';
-combined_posterior_ml_pairwise = aggregate_PART_pairwise(sub_chain, options);
+[combined_posterior_ml_pairwise, sampler, ~] = aggregate_PART_pairwise(sub_chain, options);
 
 figure;
 plot(combined_posterior_kd_pairwise(:,1), combined_posterior_kd_pairwise(:,2), 'rx'); hold on;
 plot(combined_posterior_ml_pairwise(:,1), combined_posterior_ml_pairwise(:,2), 'bo');
 plot(full_chain(:,1), full_chain(:,2), 'k.'); 
-legend('PART-KD', 'PART-ML', 'True');
-
-%% other combinations
-% UAI - nonparametric
-combined_posterior_nonparametric = aggregate_uai_nonparametric(sub_chain, 1e4);
-% UAI - semiparametric
-combined_posterior_semiparametric = aggregate_uai_semiparametric(sub_chain, 1e4);
+legend('PART-KD', 'PART-ML', 'True', 'Location', 'best');
 
 figure;
-plot(combined_posterior_nonparametric(:,1), combined_posterior_nonparametric(:,2), 'rx'); hold on;
-plot(combined_posterior_semiparametric(:,1), combined_posterior_semiparametric(:,2), 'bo');
+for i=1:16
+subplot(4,4,i); axis off;
+plot_tree_blocks(sampler{i}, []);
+title(['Tree ', num2str(i)]);
+end
+
+%% other combinations
+N = 1e5; ii = randsample(N, 1000);
+% UAI - nonparametric
+combined_posterior_nonparametric = aggregate_uai_nonparametric(sub_chain, N);
+% UAI - semiparametric
+combined_posterior_semiparametric = aggregate_uai_semiparametric(sub_chain, N);
+
+figure;
+plot(combined_posterior_nonparametric(ii,1), combined_posterior_nonparametric(ii,2), 'rx'); hold on;
+plot(combined_posterior_semiparametric(ii,1), combined_posterior_semiparametric(ii,2), 'bo');
 plot(full_chain(:,1), full_chain(:,2), 'k.'); 
 legend('nonparametric', 'semiparametric', 'True');
 

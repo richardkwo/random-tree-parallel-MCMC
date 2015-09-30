@@ -1,4 +1,4 @@
-function aggregated_samples = aggregate_PART_pairwise(sub_chains, options)
+function [aggregated_samples, sampler_pairwise, prob_pairwise] = aggregate_PART_pairwise(sub_chains, options)
 % Aggregating sub-chain samples with PART by pairwise combination
 % 
 % Call:
@@ -14,7 +14,6 @@ function aggregated_samples = aggregate_PART_pairwise(sub_chains, options)
 
 
 N = max([size(sub_chains{1}, 1), options.resample_N]);
-M = length(sub_chains);
 
 options.UseData = false;
 options.list = [];

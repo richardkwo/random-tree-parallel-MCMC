@@ -7,12 +7,10 @@ function plot_tree_blocks(tree, sub_chain, varargin)
 % plot_tree_blocks(tree_sampler, sub_chain)
 % plot_tree_blocks(tree_sampler, sub_chain, [p1 ... pn]), if only a few dimensions are plotted
 
-if ~isempty(sub_chain)
-    M = length(sub_chain);
-    cc = hsv(M);
-else
-    cc = flipud(gray(1000));
-end
+
+M = length(sub_chain);
+cc1 = hsv(M);
+cc2 = flipud(gray(1000));
 
 if isa(tree, 'treeNode')
     % get its leaf nodes
@@ -36,12 +34,18 @@ else
         dims = 1:p;
     end
     a = length(dims);
+    if a==2
+        a=1;
+    end
     % pairwise plots
     for i=dims
         for j=dims
-            hs = subplot(a,a,(i-1)*a+j);
+            if a>1
+                hs = subplot(a,a,(i-1)*a+j);
+            end
+            axis off;
             hold on;
-            if i==j
+            if i==j && a>1
                 text(0.5, 0.5, ['parameter ',num2str(j)], 'Parent', hs);
             elseif i<j
                 % iterate over and draw blocks
@@ -53,22 +57,31 @@ else
                     
                     % if sub_chains supplied, draw the points and rectangle
                     % boundary
+                    dens = (1+tanh((tree{t}.log_density - max_logdens)/20))/2;
                     if ~isempty(sub_chain)
-                        rectangle('Position',[x y w h], 'EdgeColor','red');
+                        rectangle('Position',[x y w h],...
+                            'FaceColor', cc2(floor(dens * size(cc2,1))+1,:), ...
+                            'LineWidth', 0.5);
                         points = zeros(size(tree{t}.point, 1),2);
-                        for k=1:size(points,1)
+                        B = size(points, 1);
+                        if B>20
+                            kvec = randsample(B, 20)';
+                        else
+                            kvec = 1:B;
+                        end
+                        for k=kvec
                             c = tree{t}.point(k,2);
                             internal_index = tree{t}.point(k,1);
                             points(k,1) = sub_chain{c}(internal_index, i);
                             points(k,2) = sub_chain{c}(internal_index, j);
                         end
-                        plot(points(:,1), points(:,2), '.', 'color', cc(c,:), 'LineWidth', 0.1);
+                        plot(points(:,1), points(:,2), '.', 'color', cc1(c,:), 'MarkerSize', 0.1);
                     else
                         % draw filled rectangle
-%                         dens = (1+tanh((tree{t}.log_prob - max_logdens)/50))/2
-%                         rectangle('Position',[x y w h],...
-%                             'FaceColor', cc(floor(dens * size(cc,1))+1,:));
-                        rectangle('Position',[x y w h], 'LineWidth', 0.1);
+                        rectangle('Position',[x y w h],...
+                            'FaceColor', cc2(floor(dens * size(cc2,1))+1,:), ...
+                             'LineWidth', 0.5);
+%                         rectangle('Position',[x y w h], 'LineWidth', 0.1);
                     end
                 end
             end
