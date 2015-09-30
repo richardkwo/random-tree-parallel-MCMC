@@ -8,7 +8,7 @@ MATLAB implementation of **PART**<sup>[1](#myfootnote1)</sup>: a fast algorithm 
 
 The modern scale of data has brought new challenges to Bayesian inference. In particular, conventional MCMC algorithms are computationally very expensive for large data sets. A promising approach to solve this problem is **embarrassingly parallel MCMC** (EP-MCMC), which first partitions the data into multiple subsets and runs independent sampling algorithms on each subset. The subset posterior draws are then aggregated via some combining rules to obtain the final approximation. 
 
-**PART**<sup>[1](#myfootnote1)</sup> is an EP-MCMC algorithm that applies random partition trees to combine the subset posterior draws, which is distribution-free, easy to resample from and can adapt to multiple scales. This repository maintains a MATLAB implementation of PART. 
+**PART**<sup>[1](#myfootnote1)</sup> is an EP-MCMC algorithm that applies random partition tree to combine the subset posterior draws, which is distribution-free, easy to resample from and can adapt to multiple scales. This repository maintains a MATLAB implementation of PART. 
 
 ## QuickStart
 
